@@ -26,6 +26,7 @@
 
 .android-template: &android-template
   image: registry.gitlab.com/fdroid/ci-images-client:latest
+  <<: *artifacts-template
   variables:
     DEBIAN_FRONTEND: noninteractive
   before_script:
@@ -51,12 +52,11 @@
         tar
         unzip
         wget
-  script:
-  
+
     - rm -rf $PWD/android-ndk*
     - ndk=android-ndk-`echo $CI_JOB_NAME | awk '{print $2}'`
-    - ndkzip=${ndk}-linux-x86_64.zip
-    - curl --silent http://dl.google.com/android/repository/${ndkzip} > $ndk_zip
+    - ndk_zip=${ndk}-linux-x86_64.zip
+    - curl --silent http://dl.google.com/android/repository/${ndk_zip} > $ndk_zip
     - echo "57435158f109162f41f2f43d5563d2164e4d5d0364783a9a6fab3ef12cb06ce0  $ndk_zip" > ${ndk_zip}.sha256
     - sha256sum -c ${ndk_zip}.sha256
     - unzip -q $ndk_zip
@@ -66,39 +66,30 @@
     - export EXTERNAL_ROOT=`pwd`/external
     - cd external
 
-    - mkdir openssl
-    - curl --silent --location https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz
-        | tar -xz --directory=openssl --strip-components=1
+    - git clone --single-branch --branch OpenSSL_1_1_1g https://github.com/openssl/openssl.git
+
+    - git clone --single-branch --branch release-2.1.11-stable https://github.com/libevent/libevent.git
+
+    - git clone https://github.com/facebook/zstd.git
+    - cd zstd
+    - git checkout v1.4.4
     - cd ..
 
-    - mkdir libevent
-    - curl --silent --location https://github.com/libevent/libevent/archive/release-2.1.11-stable.tar.gz
-        | tar -xz --directory=libevent --strip-components=1
-    - cd ..
-    
-    - mkdir zstd
-    - curl --silent --location https://github.com/facebook/zstd/archive/v1.3.6.tar.gz
-        | tar -xz --directory=zstd --strip-components=1
-    - cd ..
-    
     - git clone https://git.tukaani.org/xz.git
     - cd xz
-    - git checkout origin/v2.5
+    - git checkout v5.2.3
     - cd ..
-	
-	- git clone --recursive https://git.torproject.org/tor.git
-    - git checkout origin/release-0.4.4
+
+    - git clone --single-branch --branch release-0.4.4 https://git.torproject.org/tor.git
 
 android r20 22 default armeabi-v7a:
   <<: *android-template
   script:
-    - APP_ABI=armeabi make -C external clean 
-    - APP_ABI=armeabi make -C external
-  
- 
+    - APP_ABI=armeabi make clean
+    - APP_ABI=armeabi make
 
 android r20 22 default arm64-v8a:
   <<: *android-template
   script:
-    APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make -C external clean 
-    APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make -C external
+    - APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
+    - APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
