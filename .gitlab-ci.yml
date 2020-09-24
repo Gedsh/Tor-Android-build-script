@@ -70,23 +70,19 @@
 
     - git clone --single-branch --branch release-2.1.11-stable https://github.com/libevent/libevent.git
 
-    - git clone https://github.com/facebook/zstd.git
-    - cd zstd
-    - git checkout v1.4.4
-    - cd ..
+    - git clone --single-branch --branch v1.4.4 https://github.com/facebook/zstd.git
 
-    - git clone https://git.tukaani.org/xz.git
-    - cd xz
-    - git checkout v5.2.3
-    - cd ..
+    - git clone --single-branch --branch v5.2.3 https://git.tukaani.org/xz.git
 
     - git clone --single-branch --branch release-0.4.4 https://git.torproject.org/tor.git
+
 
 android r20 22 default armeabi-v7a:
   <<: *android-template
   script:
     - APP_ABI=armeabi make clean
     - APP_ABI=armeabi make
+
 
 android r20 22 default arm64-v8a:
   <<: *android-template
