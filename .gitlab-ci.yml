@@ -7,7 +7,7 @@
       - external/include
       - external/lib
       - external/test
-    expire_in: 1 week
+    expire_in: 1 year
     when: always
 
 .apt-template: &apt-template |
