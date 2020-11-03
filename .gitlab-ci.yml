@@ -25,7 +25,7 @@
 
 
 .android-template: &android-template
-  image: registry.gitlab.com/fdroid/ci-images-client:latest
+  image: ubuntu:latest
   <<: *artifacts-template
   variables:
     DEBIAN_FRONTEND: noninteractive
@@ -66,11 +66,11 @@
     - export EXTERNAL_ROOT=`pwd`/external
     - cd external
 
-    - git clone --single-branch --branch OpenSSL_1_1_1g https://github.com/openssl/openssl.git
+    - git clone --single-branch --branch OpenSSL_1_1_1h https://github.com/openssl/openssl.git
 
     - git clone --single-branch --branch release-2.1.11-stable https://github.com/libevent/libevent.git
 
-    - git clone --single-branch --branch v1.4.4 https://github.com/facebook/zstd.git
+    - git clone --single-branch --branch v1.4.5 https://github.com/facebook/zstd.git
 
     - git clone --single-branch --branch v5.2.3 https://git.tukaani.org/xz.git
 
