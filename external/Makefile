@@ -273,7 +273,7 @@ tor/Makefile: tor/configure
                         LIBS="-L$(EXTERNAL_ROOT)/lib" CFLAGS="-I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
                         ./configure \
                                 --host=$(ALTHOST) \
-				--disable-asciidoc \
+				--disable-asciidoc --enable-android --disable-system-torrc \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--disable-linker-hardening --disable-gcc-hardening --disable-tool-name-check --disable-systemd
