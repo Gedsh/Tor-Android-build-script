@@ -74,7 +74,7 @@
 
     - git clone --single-branch --branch v5.2.3 https://git.tukaani.org/xz.git
 
-    - git clone --single-branch --branch release-0.4.4 https://git.torproject.org/tor.git
+    - git clone --single-branch --branch release-0.4.5 https://git.torproject.org/tor.git
 
 
 android r20 22 default armeabi-v7a:
