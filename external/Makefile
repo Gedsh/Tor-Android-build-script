@@ -186,7 +186,8 @@ libevent/Makefile:
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
 				--disable-samples \
-				--disable-shared
+				--disable-shared \
+                --disable-openssl
 
 libevent-build-stamp: libevent/Makefile
 	$(MAKE) -C libevent ./include/event2/event-config.h all-am
