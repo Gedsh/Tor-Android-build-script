@@ -107,7 +107,7 @@ ifeq ($(APP_ABI),armeabi)
 	CFLAGS += $(TARGET_thumb_release_CFLAGS)
 endif
 
-CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -O3
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -O3 -mfpu=neon -ftree-vectorize -fvectorize -fslp-vectorize
 LDFLAGS += -Wl,--gc-sections
 
 .PHONY = clean showsetup \
