@@ -80,8 +80,8 @@
 android r21e 22 default armeabi-v7a:
   <<: *android-template
   script:
-    - APP_ABI=armeabi make clean
-    - APP_ABI=armeabi make
+    - APP_ABI=armeabi-v7a make clean
+    - APP_ABI=armeabi-v7a make
 
 
 android r21e 22 default arm64-v8a:

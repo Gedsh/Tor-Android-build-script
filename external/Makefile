@@ -101,13 +101,13 @@ LDFLAGS = -llog $(TARGET_LDFLAGS) $(PIEFLAGS)
 
 # change 'release' to 'debug' for unoptimized debug builds
 ifeq ($(APP_ABI),armeabi-v7a)
-	CFLAGS += $(TARGET_arm_release_CFLAGS)
+	CFLAGS += $(TARGET_arm_release_CFLAGS) -march=armv7-a -mfpu=neon-vfpv4
 endif
 ifeq ($(APP_ABI),armeabi)
-	CFLAGS += $(TARGET_thumb_release_CFLAGS)
+	CFLAGS += $(TARGET_thumb_release_CFLAGS) -mfpu=vfp
 endif
 
-CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -O3 -mfpu=neon -ftree-vectorize -fvectorize -fslp-vectorize
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -O3 -funsafe-math-optimizations -ftree-vectorize -fvectorize -fslp-vectorize
 LDFLAGS += -Wl,--gc-sections
 
 .PHONY = clean showsetup \
