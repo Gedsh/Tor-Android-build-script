@@ -2,7 +2,7 @@
 
 This project was created to build Tor for Android from source using Gitlab CI/CD.
 
-Precompiled binaries are used in **InviZible Pro** - Android application for Internet privacy and security.
+Precompiled binaries are used in **InviZible Pro** - Android application for Internet privacy and security. 
 
 ### [Google Play stable version](https://play.google.com/store/apps/details?id=pan.alexander.tordnscrypt.gp)
 
