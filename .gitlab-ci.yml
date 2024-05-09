@@ -47,7 +47,6 @@
         ca-certificates 
         curl
         gzip
-        libtinfo5
         pkg-config
         tar
         unzip
