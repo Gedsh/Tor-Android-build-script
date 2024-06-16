@@ -20,4 +20,4 @@ You can download the latest precompiled Tor binaries from the links:
 
 Copyright &copy; 2019-2024 by Garmatin Oleksandr invizible.soft@gmail.com
 
-This code is released under the [Apache License version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+This code is released under the [Apache License version 2.0](https://www.apache.org/licenses/LICENSE-2.0) 
