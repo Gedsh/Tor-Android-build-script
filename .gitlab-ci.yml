@@ -54,9 +54,9 @@
 
     - rm -rf $PWD/android-ndk*
     - ndk=android-ndk-`echo $CI_JOB_NAME | awk '{print $2}'`
-    - ndk_zip=${ndk}-linux-x86_64.zip
+    - ndk_zip=${ndk}-linux.zip
     - curl --silent http://dl.google.com/android/repository/${ndk_zip} > $ndk_zip
-    - echo "c3ebc83c96a4d7f539bd72c241b2be9dcd29bda9  $ndk_zip" > ${ndk_zip}.sha1
+    - echo "f47ec4c4badd11e9f593a8450180884a927c330d $ndk_zip" > ${ndk_zip}.sha1
     - sha1sum -c ${ndk_zip}.sha1
     - unzip -q $ndk_zip
     - export ANDROID_NDK_HOME=`pwd`/$ndk
@@ -76,14 +76,14 @@
     - git clone --single-branch --branch prod https://gitlab.torproject.org/Gedsh/tor.git
 
 
-android r21e 22 default armeabi-v7a:
+android r23b 22 default armeabi-v7a:
   <<: *android-template
   script:
-    - APP_ABI=armeabi make clean
-    - APP_ABI=armeabi make
+    - APP_ABI=armeabi-v7a make clean
+    - APP_ABI=armeabi-v7a make
 
 
-android r21e 22 default arm64-v8a:
+android r23b 22 default arm64-v8a:
   <<: *android-template
   script:
     - APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
