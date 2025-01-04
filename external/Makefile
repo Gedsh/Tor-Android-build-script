@@ -140,17 +140,17 @@ ifneq ($(filter mips%, $(NDK_ABI)),)
 endif
 lib/libcrypto.a:
 	cd openssl && \
-		./Configure linux-generic$(NDK_BIT) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
+		./Configure linux-generic$(NDK_BIT) -U__ANDROID_API__ -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
+		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
+		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
 lib/libssl.a:
 	cp config.sub openssl
 	cp config.guess openssl
 	cd openssl && \
-		./Configure linux-generic$(NDK_BIT) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
+		./Configure linux-generic$(NDK_BIT) -U__ANDROID_API__ -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
+		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
+		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
 openssl-build-stamp: lib/libcrypto.a lib/libssl.a
 	touch openssl-build-stamp
@@ -217,7 +217,7 @@ xz/Makefile:
 		./configure  --host=$(HOST) --disable-shared --enable-static --disable-doc --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-lzma-links --disable-scripts --prefix=$(EXTERNAL_ROOT)
 
 lzma: lzma-build-stamp
-	$(MAKE) -C xz install
+	$(MAKE) -j`nproc` -C xz install
 
 lzma-build-stamp: xz/Makefile
 	touch lzma-build-stamp
@@ -234,8 +234,8 @@ lzma-clean:
 # zstd
 
 zstd: zstd-build-stamp
-	$(MAKE) -C zstd/lib CC="$(CC)" CXX="$(CXX)" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS)"  LDFLAGS="$(LDFLAGS)" PREFIX="$(EXTERNAL_ROOT)" libzstd.a-mt 
-	$(MAKE) -C zstd/lib CC="$(CC)" CXX="$(CXX)" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS)"  LDFLAGS="$(LDFLAGS)" PREFIX="$(EXTERNAL_ROOT)" libzstd.pc 
+	$(MAKE) -j`nproc` -C zstd/lib CC="$(CC)" CXX="$(CXX)" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS)"  LDFLAGS="$(LDFLAGS)" PREFIX="$(EXTERNAL_ROOT)" libzstd.a-mt 
+	$(MAKE) -j`nproc` -C zstd/lib CC="$(CC)" CXX="$(CXX)" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS)"  LDFLAGS="$(LDFLAGS)" PREFIX="$(EXTERNAL_ROOT)" libzstd.pc 
 	test -d lib || mkdir lib
 	test -d lib/pkgconfig || mkdir lib/pkgconfig
 	test -d include || mkdir include
@@ -280,7 +280,7 @@ tor/Makefile: tor/configure
 				--disable-linker-hardening --disable-gcc-hardening --disable-tool-name-check --disable-systemd
 
 tor-build-stamp: tor/Makefile
-	$(MAKE) -C tor all-am
+	$(MAKE) -j`nproc` -C tor all-am
 	touch tor-build-stamp
 
 tor: lzma zstd libevent openssl tor-build-stamp

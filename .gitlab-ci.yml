@@ -65,7 +65,7 @@
     - export EXTERNAL_ROOT=`pwd`/external
     - cd external
 
-    - git clone --single-branch --branch openssl-3.3.1 https://github.com/openssl/openssl.git
+    - git clone --single-branch --branch openssl-3.4.0 https://github.com/openssl/openssl.git
 
     - git clone --single-branch --branch release-2.1.12-stable https://github.com/libevent/libevent.git
 
@@ -88,3 +88,9 @@ android r23b 22 default arm64-v8a:
   script:
     - APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
     - APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
+
+android r23b 22 default x86_64:
+  <<: *android-template
+  script:
+    - APP_ABI=x86_64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
+    - APP_ABI=x86_64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make

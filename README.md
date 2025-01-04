@@ -16,6 +16,8 @@ You can download the latest precompiled Tor binaries from the links:
 
 ## [Tor for Android ARM64](https://gitlab.com/Gedsh/tor-android-build-script/-/jobs/artifacts/master/raw/tor-android-binary/src/main/libs/arm64/libtor.so?job=android%20r23b%2022%20default%20arm64-v8a)
 
+## [Tor for Android x86_64](https://gitlab.com/Gedsh/tor-android-build-script/-/jobs/artifacts/master/raw/tor-android-binary/src/main/libs/x86_64/libtor.so?job=android%20r23b%2022%20default%20x86_64)
+
 ## License
 
 Copyright &copy; 2019-2025 by Garmatin Oleksandr invizible.soft@gmail.com
