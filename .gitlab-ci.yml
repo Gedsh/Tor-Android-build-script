@@ -65,7 +65,7 @@
     - export EXTERNAL_ROOT=`pwd`/external
     - cd external
 
-    - git clone --single-branch --branch openssl-3.4.1 https://github.com/openssl/openssl.git
+    - git clone --single-branch --branch openssl-3.5.1 https://github.com/openssl/openssl.git
 
     - git clone --single-branch --branch release-2.1.12-stable https://github.com/libevent/libevent.git
 
