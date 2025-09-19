@@ -99,6 +99,13 @@ endif
 CFLAGS = -DANDROID $(TARGET_CFLAGS) $(PIEFLAGS) 
 LDFLAGS = -llog $(TARGET_LDFLAGS) $(PIEFLAGS)
 
+ifeq ($(APP_ABI),arm64)
+    LDFLAGS += -Wl,-z,max-page-size=16384
+endif
+ifeq ($(APP_ABI),x86_64)
+    LDFLAGS += -Wl,-z,max-page-size=16384
+endif
+
 # change 'release' to 'debug' for unoptimized debug builds
 ifeq ($(APP_ABI),armeabi-v7a)
 	CFLAGS += $(TARGET_arm_release_CFLAGS) -march=armv7-a -mfpu=neon-vfpv4
