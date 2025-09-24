@@ -92,7 +92,7 @@ RANLIB := $(NDK_TOOLCHAIN_BASE)/bin/llvm-ranlib
 ifeq ($(DEBUG), 1)
 	STRIP := $(NOOP)
 else
-	STRIP := $(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug
+	STRIP := $(NDK_TOOLCHAIN_BASE)/bin/llvm-strip --strip-unneeded -R .note -R .comment --strip-debug
 endif
 
 
