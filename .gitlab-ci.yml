@@ -65,7 +65,7 @@
     - export EXTERNAL_ROOT=`pwd`/external
     - cd external
 
-    - git clone --single-branch --branch openssl-3.6.1 https://github.com/openssl/openssl.git
+    - git clone --single-branch --branch openssl-3.6.2 https://github.com/openssl/openssl.git
 
     - git clone --single-branch --branch release-2.1.12-stable https://github.com/libevent/libevent.git
 
@@ -73,7 +73,7 @@
 
     - git clone --single-branch --branch v5.2.4 https://git.tukaani.org/xz.git
 
-    - git clone --single-branch --branch prod https://gitlab.torproject.org/Gedsh/tor.git
+    - git clone --single-branch --branch prod-0.4.9 https://gitlab.torproject.org/Gedsh/tor.git
 
 
 android r23b 22 default armeabi-v7a:
