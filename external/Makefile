@@ -17,8 +17,7 @@ DEBUG ?= 0
 NOOP = true
 
 # Android now has 64-bit and 32-bit versions of the NDK for GNU/Linux.  We
-# assume that the build platform uses the appropriate version, otherwise the
-# user building this will have to manually set NDK_PROCESSOR or NDK_TOOLCHAIN.
+# assume that the build platform uses the appropriate version.
 CPU := $(shell uname -m)
 ifeq ($(CPU),x86_64)
  NDK_PROCESSOR=x86_64
@@ -29,14 +28,10 @@ endif
 # Android NDK setup
 ANDROID_NDK_HOME ?= /opt/android-ndk
 ANDROID_NDK ?= $(ANDROID_NDK_HOME)
-NDK_PLATFORM_LEVEL ?= 16
-NDK_TOOLCHAIN_VERSION=4.9
-NDK_BIT ?= 32
-APP_ABI ?= armeabi
+NDK_PLATFORM_LEVEL ?= 21
+APP_ABI ?= armeabi-v7a
 NDK_ABI ?= $(APP_ABI)
 
-# PIEFLAGS for SDK 16/Android L must be set to -fPIE -pie, but can override for earlier targets 
-//PIEFLAGS ?= -fPIE -pie
 PIEFLAGS ?= -fPIE
 
 ifneq ($(filter arm%, $(APP_ABI)),)
@@ -46,7 +41,6 @@ ifneq ($(filter arm64%, $(APP_ABI)),)
  NDK_ABI := arm64
 endif
 
-NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(NDK_ABI)
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
 ifneq ($(filter mips%, $(NDK_ABI)),)
  HOST := $(NDK_ABI)el-linux-android
@@ -69,23 +63,14 @@ ifneq ($(filter x86_64, $(NDK_ABI)),)
  ALTHOST := $(HOST)
 endif
 
-NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
-ifneq ($(filter x86%, $(NDK_ABI)),)
- NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
-endif
-
-//NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
-//NDK_TOOLCHAIN_BASE=/tmp/my-android-toolchain
 NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
+NDK_SYSROOT=$(NDK_TOOLCHAIN_BASE)/sysroot
 
-# include Android's build flags
 TARGET_ARCH_ABI = $(APP_ABI)
-#include $(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/setup.mk
-
 CC := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang
 CXX := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang++ --sysroot=$(NDK_SYSROOT)
 CPP := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang++ --sysroot=$(NDK_SYSROOT)
-LD := $(NDK_TOOLCHAIN_BASE)/bin/lld
+LD := $(NDK_TOOLCHAIN_BASE)/bin/ld.lld
 AR := $(NDK_TOOLCHAIN_BASE)/bin/llvm-ar
 RANLIB := $(NDK_TOOLCHAIN_BASE)/bin/llvm-ranlib
 
@@ -145,21 +130,11 @@ ifneq ($(filter mips%, $(NDK_ABI)),)
   OPENSSL_CONF_FLAG+=-D_MIPS_SZLONG=32 -D__MIPSEL__
  endif
 endif
-lib/libcrypto.a:
+openssl-build-stamp: openssl/Configure
 	cd openssl && \
-		./Configure linux-generic$(NDK_BIT) -U__ANDROID_API__ -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
-		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
-		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
-
-lib/libssl.a:
-	cp config.sub openssl
-	cp config.guess openssl
-	cd openssl && \
-		./Configure linux-generic$(NDK_BIT) -U__ANDROID_API__ -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
-		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
-		make -j`nproc` CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
-
-openssl-build-stamp: lib/libcrypto.a lib/libssl.a
+		export ANDROID_NDK_ROOT="$(ANDROID_NDK_HOME)" PATH="$(NDK_TOOLCHAIN_BASE)/bin:$$PATH" && \
+		./Configure android-$(NDK_ABI) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) no-shared $(OPENSSL_CONF_FLAG) -DNO_RECVMMSG && \
+		$(MAKE) -j`nproc` build_libs
 	touch openssl-build-stamp
 
 openssl: openssl-build-stamp
@@ -221,7 +196,7 @@ xz/Makefile:
 	cp config.guess xz
 	cd xz && \
 		 CC="$(CC)" CXX="$(CXX)" PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS) -std=c99" LDFLAGS="$(LDFLAGS)"  \
-		./configure  --host=$(HOST) --disable-shared --enable-static --disable-doc --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-lzma-links --disable-scripts --prefix=$(EXTERNAL_ROOT)
+		./configure  --host=$(ALTHOST) --disable-shared --enable-static --disable-doc --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-lzma-links --disable-scripts --prefix=$(EXTERNAL_ROOT)
 
 lzma: lzma-build-stamp
 	$(MAKE) -j`nproc` -C xz install
@@ -324,8 +299,6 @@ clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
 # debugging stuff
 
 showsetup:
-	@echo "NDK_TOOLCHAIN_VERSION: $(NDK_TOOLCHAIN_VERSION)"
-	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
 	@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
 	@echo "APP_ABI: $(APP_ABI)"
